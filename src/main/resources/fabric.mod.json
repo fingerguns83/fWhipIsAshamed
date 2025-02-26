@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "fwhipisashamed",
+  "version": "${version}",
+  "name": "fWhipIsAshamed",
+  "description": "...you did it again, didn't you?",
+  "authors": [],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/fwhipisashamed/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "net.fg83.fwhipisashamed.client.FIAClient"
+    ],
+    "main": [
+      "net.fg83.fwhipisashamed.FIA"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
