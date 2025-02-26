@@ -1,19 +1,19 @@
-package net.fg83.fwhipisashamed.client.task;
+package net.fg83.fwhipisashamed.task;
 
-import net.fg83.fwhipisashamed.client.Admonishment;
+import net.fg83.fwhipisashamed.FIA;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class TestBlocksTask implements Runnable {
-    ClientPlayerEntity player;
-    public TestBlocksTask(ClientPlayerEntity player){
+    BlockHitResult hitResult;
+    ServerPlayerEntity player;
+
+    public TestBlocksTask(ServerPlayerEntity player, HitResult hitResult){
         this.player = player;
+        this.hitResult = (BlockHitResult) hitResult;
     }
 
     @Override
@@ -22,22 +22,19 @@ public class TestBlocksTask implements Runnable {
         int initY = player.getBlockY();
         int initZ = player.getBlockZ();
 
-        List<BlockPos> foundEnderChests = new ArrayList<>();
-
+        TestLoop:
         for (int x = initX - 5; x < initX + 5; x++){
             for (int y = initY - 5; y < initY + 5; y++){
                 for (int z = initZ - 5; z < initZ + 5; z++){
                     BlockPos pos = new BlockPos(x, y, z);
                     if (player.getWorld().getBlockState(pos).getBlock().equals(Blocks.ENDER_CHEST)){
-                        foundEnderChests.add(pos);
+                        if (!hitResult.getBlockPos().offset(hitResult.getSide()).equals(pos)){
+                            player.incrementStat(FIA.PLACE_DUPLICATE_ENDER_CHEST);
+                            break TestLoop;
+                        }
                     }
                 }
             }
         }
-
-        player.sendMessage(
-                Text.literal(new Admonishment(player, foundEnderChests).get()),
-                false
-        );
     }
 }
